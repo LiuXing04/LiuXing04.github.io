@@ -96,23 +96,35 @@ function getScrollOffset() {
   if (style.position === 'sticky' || style.position === 'fixed') {
     return topbar.getBoundingClientRect().height + 12;
   }
-  return 6;
+  return 0;
 }
 
 function scrollToHash(hash) {
   const targetSelector = hash === '#home' ? '#home-profile' : hash;
   const target = document.querySelector(targetSelector);
   if (!target) return;
+
+  const getDocumentTop = (el) => {
+    let top = 0;
+    let node = el;
+    while (node) {
+      top += node.offsetTop || 0;
+      node = node.offsetParent;
+    }
+    return top;
+  };
+
   const alignToTarget = (behavior = 'auto') => {
-    const top = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
+    const top = getDocumentTop(target) - getScrollOffset();
     window.scrollTo({ top: Math.max(top, 0), behavior });
   };
 
-  setTimeout(() => {
+  // Wait one frame so section display toggle is committed before measuring.
+  requestAnimationFrame(() => {
     alignToTarget('smooth');
-    // A second pass removes residual offset caused by layout/animation changes.
-    setTimeout(() => alignToTarget('auto'), 420);
-  }, 70);
+    // Final exact pass to keep target title fully visible at the top edge.
+    setTimeout(() => alignToTarget('auto'), 260);
+  });
 }
 
 navParents.forEach((parent) => {
