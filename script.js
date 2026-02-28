@@ -119,11 +119,22 @@ function scrollToHash(hash) {
     window.scrollTo({ top: Math.max(top, 0), behavior });
   };
 
+  const settleAlign = (retries = 7) => {
+    if (retries <= 0) return;
+    const delta = target.getBoundingClientRect().top - getScrollOffset();
+    if (Math.abs(delta) <= 1) return;
+    window.scrollBy(0, delta);
+    setTimeout(() => settleAlign(retries - 1), 70);
+  };
+
   // Wait one frame so section display toggle is committed before measuring.
   requestAnimationFrame(() => {
     alignToTarget('smooth');
-    // Final exact pass to keep target title fully visible at the top edge.
-    setTimeout(() => alignToTarget('auto'), 260);
+    // Multi-pass correction handles mobile layout transitions (dropdown collapse, reveal animation).
+    setTimeout(() => {
+      alignToTarget('auto');
+      settleAlign();
+    }, 280);
   });
 }
 
