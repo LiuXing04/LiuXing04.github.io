@@ -96,16 +96,22 @@ function getScrollOffset() {
   if (style.position === 'sticky' || style.position === 'fixed') {
     return topbar.getBoundingClientRect().height + 12;
   }
-  return 0;
+  return 6;
 }
 
 function scrollToHash(hash) {
   const targetSelector = hash === '#home' ? '#home-profile' : hash;
   const target = document.querySelector(targetSelector);
   if (!target) return;
-  setTimeout(() => {
+  const alignToTarget = (behavior = 'auto') => {
     const top = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
-    window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+    window.scrollTo({ top: Math.max(top, 0), behavior });
+  };
+
+  setTimeout(() => {
+    alignToTarget('smooth');
+    // A second pass removes residual offset caused by layout/animation changes.
+    setTimeout(() => alignToTarget('auto'), 420);
   }, 70);
 }
 
