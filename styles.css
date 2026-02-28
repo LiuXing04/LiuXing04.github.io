@@ -392,8 +392,64 @@ h3 {
 
 @media (max-width: 700px) {
   .shell { width: calc(100% - 16px); }
-  .topbar { padding: 8px 10px; }
-  .nav-link { padding: 7px 8px; font-size: 0.9rem; }
+  .topbar {
+    padding: 8px 10px;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .nav {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .nav-group {
+    width: 100%;
+  }
+  .nav-group::after {
+    display: none;
+  }
+  .nav-link {
+    display: block;
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 0.92rem;
+    text-align: left;
+  }
+  .dropdown {
+    position: static;
+    left: auto;
+    right: auto;
+    min-width: 0;
+    margin-top: 0;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    transition: max-height 0.22s ease, margin-top 0.22s ease, padding 0.22s ease;
+  }
+  .nav-group:hover .dropdown,
+  .nav-group:focus-within .dropdown {
+    max-height: 0;
+    margin-top: 0;
+    padding: 0;
+  }
+  .nav-group.mobile-open .dropdown {
+    max-height: 280px;
+    margin-top: 6px;
+    padding: 6px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(9, 18, 36, 0.65);
+  }
+  .dropdown a {
+    padding: 8px 10px;
+  }
   .card { padding: 16px; }
-  .dropdown { left: auto; right: 0; }
 }

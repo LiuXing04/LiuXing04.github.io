@@ -23,6 +23,9 @@
 
 const views = [...document.querySelectorAll('.view')];
 const navLinks = [...document.querySelectorAll('.nav-link, .dropdown a')];
+const navGroups = [...document.querySelectorAll('.nav-group')];
+const navParents = [...document.querySelectorAll('.nav-parent')];
+const mobileQuery = window.matchMedia('(max-width: 700px)');
 
 function currentHash() {
   return window.location.hash || '#home';
@@ -60,6 +63,8 @@ function activate(route, hash) {
       }, 70);
     }
   }
+
+  closeMobileDropdowns();
 }
 
 function render() {
@@ -70,3 +75,31 @@ function render() {
 
 window.addEventListener('hashchange', render);
 render();
+
+function isMobileNav() {
+  return mobileQuery.matches;
+}
+
+function closeMobileDropdowns() {
+  navGroups.forEach((group) => group.classList.remove('mobile-open'));
+}
+
+navParents.forEach((parent) => {
+  parent.addEventListener('click', (event) => {
+    if (!isMobileNav()) return;
+    const group = parent.closest('.nav-group');
+    if (!group) return;
+    const isOpen = group.classList.contains('mobile-open');
+    if (!isOpen) {
+      event.preventDefault();
+      closeMobileDropdowns();
+      group.classList.add('mobile-open');
+    }
+  });
+});
+
+document.addEventListener('click', (event) => {
+  if (!isMobileNav()) return;
+  if (event.target.closest('.nav-group')) return;
+  closeMobileDropdowns();
+});
