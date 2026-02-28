@@ -26,6 +26,7 @@ const navLinks = [...document.querySelectorAll('.nav-link, .dropdown a')];
 const navGroups = [...document.querySelectorAll('.nav-group')];
 const navParents = [...document.querySelectorAll('.nav-parent')];
 const mobileQuery = window.matchMedia('(max-width: 700px)');
+const topbar = document.querySelector('.topbar');
 
 function currentHash() {
   return window.location.hash || '#home';
@@ -57,13 +58,7 @@ function activate(route, hash, options = {}) {
   });
 
   if (allowScroll && hash) {
-    const targetSelector = hash === '#home' ? '#home-profile' : hash;
-    const target = document.querySelector(targetSelector);
-    if (target) {
-      setTimeout(() => {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 70);
-    }
+    scrollToHash(hash);
   }
 
   closeMobileDropdowns();
@@ -84,6 +79,25 @@ function isMobileNav() {
 
 function closeMobileDropdowns() {
   navGroups.forEach((group) => group.classList.remove('mobile-open'));
+}
+
+function getScrollOffset() {
+  if (!topbar) return 10;
+  const style = window.getComputedStyle(topbar);
+  if (style.position === 'sticky' || style.position === 'fixed') {
+    return topbar.getBoundingClientRect().height + 12;
+  }
+  return 10;
+}
+
+function scrollToHash(hash) {
+  const targetSelector = hash === '#home' ? '#home-profile' : hash;
+  const target = document.querySelector(targetSelector);
+  if (!target) return;
+  setTimeout(() => {
+    const top = target.getBoundingClientRect().top + window.scrollY - getScrollOffset();
+    window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+  }, 70);
 }
 
 navParents.forEach((parent) => {
@@ -113,4 +127,20 @@ document.addEventListener('click', (event) => {
   if (!isMobileNav()) return;
   if (event.target.closest('.nav-group')) return;
   closeMobileDropdowns();
+});
+
+navLinks.forEach((link) => {
+  link.addEventListener('click', (event) => {
+    const href = link.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+
+    // Same-hash clicks do not trigger hashchange; force scroll for consistency.
+    if (href === currentHash()) {
+      // Keep mobile parent second-tap behavior for sections with submenu.
+      if (isMobileNav() && link.classList.contains('nav-parent') && href !== '#home') return;
+      event.preventDefault();
+      const route = anchorToRoute[href] || 'home';
+      activate(route, href, { allowScroll: true });
+    }
+  });
 });
