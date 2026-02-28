@@ -89,12 +89,21 @@ navParents.forEach((parent) => {
     if (!isMobileNav()) return;
     const group = parent.closest('.nav-group');
     if (!group) return;
-    const isOpen = group.classList.contains('mobile-open');
-    if (!isOpen) {
-      event.preventDefault();
+    const parentHash = parent.getAttribute('href') || '#home';
+    const currentRoute = anchorToRoute[currentHash()] || 'home';
+    const parentRoute = anchorToRoute[parentHash] || 'home';
+
+    // First tap on a different section: navigate directly.
+    if (parentRoute !== currentRoute) {
       closeMobileDropdowns();
-      group.classList.add('mobile-open');
+      return;
     }
+
+    // Tap again on current section: toggle submenu.
+    event.preventDefault();
+    const isOpen = group.classList.contains('mobile-open');
+    closeMobileDropdowns();
+    if (!isOpen) group.classList.add('mobile-open');
   });
 });
 
