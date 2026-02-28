@@ -96,7 +96,7 @@ function getScrollOffset() {
   if (style.position === 'sticky' || style.position === 'fixed') {
     return topbar.getBoundingClientRect().height + 12;
   }
-  return 10;
+  return 0;
 }
 
 function scrollToHash(hash) {
@@ -141,7 +141,15 @@ document.addEventListener('click', (event) => {
 
 document.querySelectorAll('.dropdown a').forEach((link) => {
   link.addEventListener('click', (event) => {
+    event.preventDefault();
     event.stopPropagation();
+    const href = link.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+    if (currentHash() !== href) {
+      history.pushState({}, '', href);
+    }
+    const route = anchorToRoute[href] || 'home';
+    activate(route, href, { allowScroll: true });
   });
 });
 
@@ -149,6 +157,7 @@ navLinks.forEach((link) => {
   link.addEventListener('click', (event) => {
     const href = link.getAttribute('href');
     if (!href || !href.startsWith('#')) return;
+    if (link.closest('.dropdown')) return;
     if (topLevelHashes.has(href)) return;
 
     // Same-hash clicks do not trigger hashchange; force scroll for consistency.
