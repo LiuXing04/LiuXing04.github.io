@@ -31,7 +31,8 @@ function currentHash() {
   return window.location.hash || '#home';
 }
 
-function activate(route, hash) {
+function activate(route, hash, options = {}) {
+  const allowScroll = options.allowScroll ?? true;
   views.forEach((view) => {
     view.classList.toggle('active', view.dataset.route === route);
   });
@@ -55,8 +56,9 @@ function activate(route, hash) {
     setTimeout(() => el.classList.add('in'), 60 + index * 55);
   });
 
-  if (hash && hash !== '#home') {
-    const target = document.querySelector(hash);
+  if (allowScroll && hash) {
+    const targetSelector = hash === '#home' ? '#home-profile' : hash;
+    const target = document.querySelector(targetSelector);
     if (target) {
       setTimeout(() => {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -67,14 +69,14 @@ function activate(route, hash) {
   closeMobileDropdowns();
 }
 
-function render() {
+function render(options = {}) {
   const hash = currentHash();
   const route = anchorToRoute[hash] || 'home';
-  activate(route, hash);
+  activate(route, hash, options);
 }
 
-window.addEventListener('hashchange', render);
-render();
+window.addEventListener('hashchange', () => render({ allowScroll: true }));
+render({ allowScroll: false });
 
 function isMobileNav() {
   return mobileQuery.matches;
