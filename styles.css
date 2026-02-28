@@ -124,8 +124,7 @@ body {
   transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
-.nav-group:hover .dropdown,
-.nav-group:focus-within .dropdown {
+.nav-group:hover .dropdown {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
