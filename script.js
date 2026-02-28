@@ -82,6 +82,14 @@ function closeMobileDropdowns() {
   navGroups.forEach((group) => group.classList.remove('mobile-open'));
 }
 
+function navigateTopLevel(hash) {
+  const route = anchorToRoute[hash] || 'home';
+  if (currentHash() !== hash) {
+    history.pushState({}, '', hash);
+  }
+  activate(route, hash, { allowScroll: false });
+}
+
 function getScrollOffset() {
   if (!topbar) return 10;
   const style = window.getComputedStyle(topbar);
@@ -103,21 +111,30 @@ function scrollToHash(hash) {
 
 navParents.forEach((parent) => {
   parent.addEventListener('click', (event) => {
-    if (!isMobileNav()) return;
+    event.preventDefault();
     const group = parent.closest('.nav-group');
-    if (!group) return;
     const parentHash = parent.getAttribute('href') || '#home';
     const currentRoute = anchorToRoute[currentHash()] || 'home';
     const parentRoute = anchorToRoute[parentHash] || 'home';
 
+    if (!isMobileNav()) {
+      navigateTopLevel(parentHash);
+      return;
+    }
+
+    if (!group) {
+      navigateTopLevel(parentHash);
+      return;
+    }
+
     // First tap on a different section: navigate directly.
     if (parentRoute !== currentRoute) {
       closeMobileDropdowns();
+      navigateTopLevel(parentHash);
       return;
     }
 
     // Tap again on current section: toggle submenu.
-    event.preventDefault();
     const isOpen = group.classList.contains('mobile-open');
     closeMobileDropdowns();
     if (!isOpen) group.classList.add('mobile-open');
