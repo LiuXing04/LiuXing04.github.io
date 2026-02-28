@@ -112,6 +112,7 @@ function scrollToHash(hash) {
 navParents.forEach((parent) => {
   parent.addEventListener('click', (event) => {
     event.preventDefault();
+    event.stopPropagation();
     const group = parent.closest('.nav-group');
     const parentHash = parent.getAttribute('href') || '#home';
 
@@ -125,14 +126,10 @@ navParents.forEach((parent) => {
       return;
     }
 
-    // Mobile: one tap switches section and opens submenu together.
-    const isSameHash = currentHash() === parentHash;
-    const isOpen = group.classList.contains('mobile-open');
+    // Mobile: one tap switches section and opens current submenu.
     closeMobileDropdowns();
     navigateTopLevel(parentHash);
-    if (!(isSameHash && isOpen)) {
-      group.classList.add('mobile-open');
-    }
+    group.classList.add('mobile-open');
   });
 });
 
@@ -140,6 +137,12 @@ document.addEventListener('click', (event) => {
   if (!isMobileNav()) return;
   if (event.target.closest('.nav-group')) return;
   closeMobileDropdowns();
+});
+
+document.querySelectorAll('.dropdown a').forEach((link) => {
+  link.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
 });
 
 navLinks.forEach((link) => {
