@@ -114,8 +114,6 @@ navParents.forEach((parent) => {
     event.preventDefault();
     const group = parent.closest('.nav-group');
     const parentHash = parent.getAttribute('href') || '#home';
-    const currentRoute = anchorToRoute[currentHash()] || 'home';
-    const parentRoute = anchorToRoute[parentHash] || 'home';
 
     if (!isMobileNav()) {
       navigateTopLevel(parentHash);
@@ -127,17 +125,14 @@ navParents.forEach((parent) => {
       return;
     }
 
-    // First tap on a different section: navigate directly.
-    if (parentRoute !== currentRoute) {
-      closeMobileDropdowns();
-      navigateTopLevel(parentHash);
-      return;
-    }
-
-    // Tap again on current section: toggle submenu.
+    // Mobile: one tap switches section and opens submenu together.
+    const isSameHash = currentHash() === parentHash;
     const isOpen = group.classList.contains('mobile-open');
     closeMobileDropdowns();
-    if (!isOpen) group.classList.add('mobile-open');
+    navigateTopLevel(parentHash);
+    if (!(isSameHash && isOpen)) {
+      group.classList.add('mobile-open');
+    }
   });
 });
 
