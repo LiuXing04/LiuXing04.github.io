@@ -58,11 +58,11 @@ function activate(route, hash, options = {}) {
     setTimeout(() => el.classList.add('in'), 60 + index * 55);
   });
 
+  closeMobileDropdowns();
+
   if (allowScroll && hash && !topLevelHashes.has(hash)) {
     scrollToHash(hash);
   }
-
-  closeMobileDropdowns();
 }
 
 function render(options = {}) {
