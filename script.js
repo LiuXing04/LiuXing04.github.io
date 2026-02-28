@@ -27,6 +27,7 @@ const navGroups = [...document.querySelectorAll('.nav-group')];
 const navParents = [...document.querySelectorAll('.nav-parent')];
 const mobileQuery = window.matchMedia('(max-width: 700px)');
 const topbar = document.querySelector('.topbar');
+const topLevelHashes = new Set(['#home', '#education', '#science', '#projects', '#blog']);
 
 function currentHash() {
   return window.location.hash || '#home';
@@ -57,7 +58,7 @@ function activate(route, hash, options = {}) {
     setTimeout(() => el.classList.add('in'), 60 + index * 55);
   });
 
-  if (allowScroll && hash) {
+  if (allowScroll && hash && !topLevelHashes.has(hash)) {
     scrollToHash(hash);
   }
 
@@ -133,11 +134,10 @@ navLinks.forEach((link) => {
   link.addEventListener('click', (event) => {
     const href = link.getAttribute('href');
     if (!href || !href.startsWith('#')) return;
+    if (topLevelHashes.has(href)) return;
 
     // Same-hash clicks do not trigger hashchange; force scroll for consistency.
     if (href === currentHash()) {
-      // Keep mobile parent second-tap behavior for sections with submenu.
-      if (isMobileNav() && link.classList.contains('nav-parent') && href !== '#home') return;
       event.preventDefault();
       const route = anchorToRoute[href] || 'home';
       activate(route, href, { allowScroll: true });
