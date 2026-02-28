@@ -15,6 +15,8 @@
 html, body {
   margin: 0;
   padding: 0;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -36,6 +38,7 @@ body {
 
 .shell {
   width: min(1120px, calc(100% - 28px));
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -164,6 +167,7 @@ main {
   background: var(--card);
   box-shadow: var(--shadow);
   padding: 24px;
+  max-width: 100%;
 }
 
 .narrow { max-width: 840px; }
@@ -321,6 +325,7 @@ h3 {
   border-radius: 12px;
   padding: 12px 14px;
   background: rgba(255, 255, 255, 0.02);
+  max-width: 100%;
 }
 
 .item .time {
@@ -330,10 +335,12 @@ h3 {
 
 .table-wrap {
   margin-top: 10px;
+  max-width: 100%;
   overflow-x: auto;
   border: 1px solid rgba(157, 184, 230, 0.24);
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.02);
+  -webkit-overflow-scrolling: touch;
 }
 
 .patent-table {
@@ -349,6 +356,7 @@ h3 {
   padding: 10px 12px;
   text-align: left;
   line-height: 1.6;
+  white-space: normal;
 }
 
 .patent-table th {
@@ -461,7 +469,8 @@ h3 {
     margin-top: 6px;
   }
   .table-wrap {
-    overflow-x: visible;
+    overflow-x: auto;
+    max-width: 100%;
   }
   .patent-table {
     min-width: 0;
